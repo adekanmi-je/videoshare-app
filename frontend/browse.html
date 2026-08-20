@@ -1,40 +1,49 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8" /><title>VideoShare — Browse</title><link rel="stylesheet" href="/css/style.css" /></head>
+<head>
+  <meta charset="utf-8" />
+  <title>VideoShare — Browse</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>
 <body>
-  <nav id="nav"></nav>
-  <h1>Browse videos</h1>
-  <form id="searchForm" onsubmit="return false;">
-    <input id="q" placeholder="Search by title" />
-    <select id="genre">
-      <option value="">All genres</option>
-      <option>Comedy</option><option>Music</option><option>Education</option>
-      <option>Gaming</option><option>Sport</option><option>Other</option>
-    </select>
-    <button id="searchBtn">Search</button>
-  </form>
-  <div class="grid" id="grid" style="margin-top:1rem"></div>
-  <script src="/js/api.js"></script>
-  <script>
-    renderNav();
-    async function runSearch() {
-      const q = document.getElementById('q').value.trim();
-      const genre = document.getElementById('genre').value;
-      const params = new URLSearchParams();
-      if (q) params.set('search', q);
-      if (genre) params.set('genre', genre);
-      const grid = document.getElementById('grid');
-      grid.textContent = 'Searching…';
-      try {
-        const videos = await apiFetch('/videos?' + params.toString());
-        grid.innerHTML = videos.length ? videos.map((v) => `
-          <a class="card" href="/watch.html?id=${v.id}" style="text-decoration:none;color:inherit">
-            <h3>${v.title}</h3><div class="meta">${v.genre} · ${v.ageRating} · by ${v.creatorName}</div>
-          </a>`).join('') : 'No results.';
+<nav id="nav"></nav>
+<h1>Browse videos</h1>
+<form id="searchForm" onsubmit="return false;">
+<input id="q" placeholder="Search by title" />
+<select id="genre">
+<option value="">All genres</option>
+<option>Comedy</option><option>Music</option><option>Education</option>
+<option>Gaming</option><option>Sport</option><option>Other</option>
+</select>
+<button id="searchBtn">Search</button>
+</form>
+<div class="grid" id="grid" style="margin-top:1rem"></div>
+<script src="/js/api.js"></script>
+<script>
+renderNav();
+async function runSearch() {
+const q = document.getElementById('q').value.trim();
+const genre = document.getElementById('genre').value;
+const params = new URLSearchParams();
+if (q) params.set('search', q);
+if (genre) params.set('genre', genre);
+const grid = document.getElementById('grid');
+grid.innerHTML = skeletonGrid(6).match(/<div class="grid">([\s\S]*)<\/div>/)[1];
+try {
+const videos = await apiFetch('/videos?' + params.toString());
+grid.innerHTML = videos.length ? videos.map((v) => `
+  <a class="card" href="/watch.html?id=${v.id}">
+    <div class="thumb">${v.genre}</div>
+    <div class="body">
+      <h3>${v.title}</h3>
+      <div class="meta">${v.ageRating} · by ${v.creatorName}</div>
+    </div>
+  </a>`).join('') : '<p class="meta">No results.</p>';
       } catch (e) { grid.innerHTML = `<p class="error">${e.message}</p>`; }
     }
-    document.getElementById('searchBtn').onclick = runSearch;
-    runSearch();
-  </script>
+document.getElementById('searchBtn').onclick = runSearch;
+runSearch();
+</script>
 </body>
 </html>

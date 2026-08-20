@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8" /><title>Log in</title><link rel="stylesheet" href="/css/style.css" /></head>
+<head>
+  <meta charset="utf-8" />
+  <title>Log in</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>
 <body>
-  <nav id="nav"></nav>
-  <h1>Log in</h1>
-  <form id="f" onsubmit="return false;">
-    <input id="email" type="email" placeholder="Email" required />
-    <input id="password" type="password" placeholder="Password" required />
-    <button id="submit">Log in</button><p class="error" id="err"></p>
-  </form>
-  <p>New here? <a href="/signup.html">Create a consumer account</a></p>
-  <script src="/js/api.js"></script>
-  <script>
-    renderNav();
-    document.getElementById('submit').onclick = async () => {
-      try {
-        const data = await apiFetch('/login', { method: 'POST', body: JSON.stringify({
-          email: document.getElementById('email').value, password: document.getElementById('password').value }) });
-        setSession(data.token, data.role, data.displayName);
-        location.href = '/index.html';
+<nav id="nav"></nav>
+<h1>Log in</h1>
+<form id="f" onsubmit="return false;">
+<input id="email" type="email" placeholder="Email" required />
+<input id="password" type="password" placeholder="Password" required />
+<button id="submit">Log in</button><p class="error" id="err"></p>
+</form>
+<p>New here? <a href="/signup.html">Create a consumer account</a></p>
+<script src="/js/api.js"></script>
+<script>
+renderNav();
+document.getElementById('submit').onclick = async () => {
+try {
+const data = await apiFetch('/login', { method: 'POST', body: JSON.stringify({
+email: document.getElementById('email').value, password: document.getElementById('password').value }) });
+setSession(data.token, data.role, data.displayName);
+location.href = '/index.html';
       } catch (e) { document.getElementById('err').textContent = e.message; }
     };
-  </script>
+</script>
 </body>
 </html>
