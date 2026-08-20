@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+const API_BASE = 'https://videoshare-api.azurewebsites.net/api';
 function getToken() { return localStorage.getItem('token'); }
 function getRole() { return localStorage.getItem('role'); }
 function getDisplayName() { return localStorage.getItem('displayName'); }
@@ -6,7 +6,6 @@ function setSession(token, role, displayName) {
     localStorage.setItem('token', token); localStorage.setItem('role', role); localStorage.setItem('displayName', displayName);
 }
 function clearSession() { localStorage.removeItem('token'); localStorage.removeItem('role'); localStorage.removeItem('displayName'); }
-
 async function apiFetch(path, options = {}) {
     const headers = options.headers || {};
     if (options.body) headers['Content-Type'] = 'application/json';
@@ -17,7 +16,6 @@ async function apiFetch(path, options = {}) {
     if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
     return data;
 }
-
 function renderNav() {
     const nav = document.getElementById('nav');
     if (!nav) return;
@@ -34,7 +32,6 @@ function renderNav() {
     const logout = document.getElementById('logoutLink');
     if (logout) logout.onclick = (e) => { e.preventDefault(); clearSession(); location.href = '/index.html'; };
 }
-
 function skeletonGrid(count = 6) {
     return `<div class="grid">${Array.from({ length: count }, () => `
         <div class="card skeleton-card">
