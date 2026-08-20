@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /><title>VideoShare — Dashboard</title><link rel="stylesheet" href="/css/style.css" /></head>
+<body>
+  <nav id="nav"></nav>
+  <h1>Latest videos</h1>
+  <div class="grid" id="grid">Loading…</div>
+  <script src="/js/api.js"></script>
+  <script>
+    renderNav();
+    apiFetch('/videos').then((videos) => {
+      const grid = document.getElementById('grid');
+      if (!videos.length) { grid.textContent = 'No videos yet.'; return; }
+      grid.innerHTML = videos.map((v) => `
+        <a class="card" href="/watch.html?id=${v.id}" style="text-decoration:none;color:inherit">
+          <h3>${v.title}</h3><div class="meta">${v.genre} · ${v.ageRating} · by ${v.creatorName}</div>
+        </a>`).join('');
+    }).catch((e) => { document.getElementById('grid').innerHTML = `<p class="error">${e.message}</p>`; });
+  </script>
+</body>
+</html>

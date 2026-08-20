@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /><title>Upload</title><link rel="stylesheet" href="/css/style.css" /></head>
+<body>
+  <nav id="nav"></nav>
+  <h1>Upload a video</h1>
+  <form id="f" onsubmit="return false;">
+    <input id="title" placeholder="Title" required />
+    <input id="publisher" placeholder="Publisher" />
+    <input id="producer" placeholder="Producer" />
+    <select id="genre" required><option value="">Genre…</option><option>Comedy</option><option>Music</option><option>Education</option><option>Gaming</option><option>Sport</option><option>Other</option></select>
+    <select id="ageRating" required><option value="">Age rating…</option><option>U</option><option>PG</option><option>12</option><option>15</option><option>18</option></select>
+    <input id="file" type="file" accept="video/*" required />
+    <button id="submit">Upload</button><p id="status"></p><p class="error" id="err"></p>
+  </form>
+  <script src="/js/api.js"></script>
+  <script>
+    renderNav();
+    if (getRole() !== 'creator') document.getElementById('f').innerHTML = '<p>You must be logged in as a creator to upload.</p>';
+    document.getElementById('submit').onclick = async () => {
+      const err = document.getElementById('err'); const status = document.getElementById('status'); err.textContent = '';
+      try {
+        const file = document.getElementById('file').files[0];
+        if (!file) { err.textContent = 'Choose a file first'; return; }
+        status.textContent = 'Creating video record…';
+        const { video, uploadUrl } = await apiFetch('/videos', { method: 'POST', body: JSON.stringify({
+          title: document.getElementById('title').value, publisher: document.getElementById('publisher').value,
+          producer: document.getElementById('producer').value, genre: document.getElementById('genre').value,
+          ageRating: document.getElementById('ageRating').value }) });
+        status.textContent = 'Uploading file to storage…';
+        const putRes = await fetch(uploadUrl, { method: 'PUT', headers: { 'x-ms-blob-type': 'BlockBlob', 'Content-Type': file.type }, body: file });
+        if (!putRes.ok) throw new Error('Upload to storage failed');
+        status.textContent = 'Finalising…';
+        await apiFetch(`/videos/${video.id}/confirm`, { method: 'PATCH' });
+        status.textContent = 'Done!';
+        location.href = `/watch.html?id=${video.id}`;
+      } catch (e) { err.textContent = e.message; status.textContent = ''; }
+    };
+  </script>
+</body>
+</html>
