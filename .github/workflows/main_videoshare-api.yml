@@ -77,3 +77,4 @@ jobs:
           app-name: 'videoshare-api'
           slot-name: 'Production'
           package: '.'
+          remote-build: true
