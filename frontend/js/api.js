@@ -1,4 +1,4 @@
-const API_BASE = 'https://videoshare-api.azurewebsites.net/api';
+const API_BASE = 'https://videoshare-api-e3btesayc6fnb2dr.swedencentral-01.azurewebsites.net/api';
 function getToken() { return localStorage.getItem('token'); }
 function getRole() { return localStorage.getItem('role'); }
 function getDisplayName() { return localStorage.getItem('displayName'); }
